@@ -19,7 +19,7 @@ app.post('/api/genres', (req, res) => {
 app.put('/api/genres/:genre', (req, res) => {
     const genre = genres.find( (genre) => genre.toLowerCase() === req.params.genre.toLowerCase());
     if (!genre) 
-        return res.status(404).send(`${req.params.genre} is not one of the current genres.`);
+        return res.status(404).send(`'${req.params.genre}' is not one of the current genres.`);
     
     genres[genres.indexOf(genre)] = req.body.genre;
     res.send(req.body.genre);
