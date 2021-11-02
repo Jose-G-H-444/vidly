@@ -20,8 +20,18 @@ app.put('/api/genres/:genre', (req, res) => {
     const genre = genres.find( (genre) => genre.toLowerCase() === req.params.genre.toLowerCase());
     if (!genre) 
         return res.status(404).send(`${req.params.genre} is not one of the current genres.`);
+    
     genres[genres.indexOf(genre)] = req.body.genre;
     res.send(req.body.genre);
+});
+
+app.delete('/api/genres/:genre', (req, res) => {
+    const genre = genres.find( (genre) => genre.toLowerCase() === req.params.genre.toLowerCase());
+    if (!genre) 
+        return res.status(404).send(`'${req.params.genre}' is not one of the current genres.`);
+
+    genres.splice(genres.indexOf(genre), 1);
+    res.send(genre);
 });
 
 const port = process.env.PORT || 3000;
