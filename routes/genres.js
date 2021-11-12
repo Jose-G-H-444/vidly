@@ -4,10 +4,12 @@ const debug = require('debug')('app:base');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const helmet = require('helmet');
 
 // Required middleware
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
+router.use(helmet());
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => debug('Connected to MongoDB...'))
