@@ -43,7 +43,7 @@ const Genre = mongoose.model('Genre', genreSchema);
 router.get('/', async (req, res) => {
     const genres = await Genre.find()
     .select({ name: 1, datefounded: 1 });
-    res.json(genres);
+    res.status(200).json(genres);
 });
 
 router.get('/:id', (req, res) => {
