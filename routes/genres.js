@@ -58,7 +58,7 @@ router.get('/:id', async (req, res) => {
     } 
     catch (err) {
         debug(err.message);
-        res.status(404).send('Please provide a valid ID');
+        res.status(404).send('ID provided was invalid.');
     }
 });
 
