@@ -26,13 +26,13 @@ const genreSchema = new mongoose.Schema({
 const Genre = mongoose.model('Genre', genreSchema);
 
 // Add genres to database
-async function addGenres() {
-    const genreData = fs.readFileSync('routes/genres.json');
-    let genres = JSON.parse(genreData);
-    courses = await Genre.insertMany(genres);
-    debug(genres);
-}
-addGenres();
+// async function addGenres() {
+//     const genreData = fs.readFileSync('routes/genres.json');
+//     let genres = JSON.parse(genreData);
+//     courses = await Genre.insertMany(genres);
+//     debug(genres);
+// }
+// addGenres();
 
 // let genres = [
 //     { id: 1, name: 'Horror'},
@@ -41,6 +41,8 @@ addGenres();
 // ];
 
 router.get('/', (req, res) => {
+    const genres = Genre.find()
+    .select({ name: 1, datefounded: 1 });
     res.send(genres);
 });
 
