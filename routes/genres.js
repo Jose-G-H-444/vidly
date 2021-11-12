@@ -40,10 +40,10 @@ const Genre = mongoose.model('Genre', genreSchema);
 //     { id: 3, name: 'Comedy'}
 // ];
 
-router.get('/', (req, res) => {
-    const genres = Genre.find()
+router.get('/', async (req, res) => {
+    const genres = await Genre.find()
     .select({ name: 1, datefounded: 1 });
-    res.send(genres);
+    res.json(genres);
 });
 
 router.get('/:id', (req, res) => {
