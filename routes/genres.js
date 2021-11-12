@@ -48,11 +48,18 @@ router.get('/', async (req, res) => {
     res.status(200).json(genres);
 });
 
-router.get('/:id', (req, res) => {
-    const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
-    if (!genre) 
-        return res.status(404).send(`ID: ${req.params.id} does not exist.`);
-    res.status(200).send(genre);
+router.get('/:id', async (req, res) => {
+    try {
+        const genre = await Genre.findById(req.params.id);
+        // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
+        if (!genre) 
+            return res.status(404).send(`ID: ${req.params.id} does not exist.`);
+        res.status(200).json(genre);
+    } 
+    catch (err) {
+        debug(err.message);
+        res.status(404).send('Please provide a valid ID');
+    }
 });
 
 router.post('/', (req, res) => {
