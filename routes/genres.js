@@ -2,9 +2,25 @@ const express = require('express');
 const router = express.Router();
 const debug = require('debug')('app:base');
 const Joi = require('joi');
+const mongoose = require('mongoose');
 
+// Required middleware
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => debug('Connected to MongoDB...'))
+    .catch(erro => debug('Could not connect to MongoDB'));
+
+const genreSchema = new mongoose.Schema({
+    name: { 
+        type: String,
+        required: true,
+        minlength: 4,
+        maxlength: 20,
+        lowercase: true
+    }
+});
 
 let genres = [
     { id: 1, name: 'Horror'},
