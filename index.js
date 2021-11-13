@@ -11,7 +11,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 // Add genres to database
 // async function addGenres() {
-//     const genreData = fs.readFileSync('routes/genres.json');
+//     const genreData = fs.readFileSync('data/genres.json');
 //     let genres = JSON.parse(genreData);
 //     courses = await Genre.insertMany(genres);
 //     debug(genres);
