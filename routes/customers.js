@@ -24,7 +24,8 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
     phone: {
         type: Number,
         required: true
-    }
+    },
+    isGold: Boolean
 }));
 
 router.get('/', async (req, res) => {
@@ -117,7 +118,8 @@ module.exports = router;
 function validateGenre(genre) {
     const schema = Joi.object({
         name: Joi.string().min(MIN_LENGTH_CUST_NAME).max(MAX_LENGTH_CUST_NAME).required(),
-        datefounded: Joi.date()
+        datefounded: Joi.date(),
+        isGold: Boolean
     });
 
     return schema.validate(genre);
