@@ -112,13 +112,24 @@ router.put('/:id', async (req, res) => {
     // res.send('working');
 });
 
-router.delete('/:id', (req, res) => {
-    const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
-    if (!genre) 
-        return res.status(404).send(`ID: ${req.params.id} does not exist.`);
+router.delete('/:id', async (req, res) => {
+    // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
+    try {
+        const genre = await Genre.findByIdAndDelete(req.params.id);
+        // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
+        if (!genre) 
+            return res.status(404).send(`ID: ${req.params.id} does not exist.`);
+        
+        res.status(200).json(genre);
+    } 
+    catch (err) {
+        res.status(400).send('ID provided was invalid.');
+    }
+    // if (!genre) 
+    //     return res.status(404).send(`ID: ${req.params.id} does not exist.`);
 
-    genres.splice(genres.indexOf(genre), 1);
-    res.send(genre);
+    // genres.splice(genres.indexOf(genre), 1);
+    // res.send(genre);
 });
 
 module.exports = router;
