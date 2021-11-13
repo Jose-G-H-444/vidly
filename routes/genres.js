@@ -19,7 +19,7 @@ const genreSchema = new mongoose.Schema({
     name: { 
         type: String,
         required: true,
-        minlength: 4,
+        minlength: 5,
         maxlength: 20,
         lowercase: true
     },
@@ -52,8 +52,10 @@ router.get('/:id', async (req, res) => {
     try {
         const genre = await Genre.findById(req.params.id);
         // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
-        if (!genre) 
+        if (!genre) {
+            debug(genre);
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
+        }
         res.status(200).json(genre);
     } 
     catch (err) {
@@ -62,14 +64,21 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const { error } = validateGenre(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    if (!genres.find( (genre) => genre.name === req.body.name)) {
-        genre = { id: genres.length + 1, name: req.body.name };
-        genres.push(genre);
-        return res.send(genre);
+    // if (!genres.find( (genre) => genre.name === req.body.name)) {
+    let genre = await Genre.findOne({ name: req.body.name.toLowerCase() }).exec();
+    if (!genre) {
+        genre = new Genre({
+            name: req.body.name,
+            datefounded: req.body.datefounded
+        });
+        // genre = { name: req.body.name };
+        // genres.push(genre);
+        await genre.save();
+        return res.status(200).json(genre);
     }
     res.status(400).send(`${req.body.name} already exists.`);
 });
@@ -99,7 +108,8 @@ module.exports = router;
 
 function validateGenre(genre) {
     const schema = Joi.object({
-        name: Joi.string().min(5).required()
+        name: Joi.string().min(5).max(20).required(),
+        datefounded: Joi.date()
     });
 
     return schema.validate(genre);
