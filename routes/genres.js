@@ -84,25 +84,30 @@ router.post('/', async (req, res) => {
         res.status(400).send(`${req.body.name} already exists.`);
     } 
     catch (err) {
-        res.status(400).send('Invalid update.');
+        res.status(400).send('Invalid entry.');
     }
 });
 
 router.put('/:id', async (req, res) => {
-    const genre = await Genre.findById(req.params.id);
-    // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
-    if (!genre) 
-        return res.status(404).send(`ID: ${req.params.id} does not exist.`);
-    
-    const { error } = validateGenre(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    try {
+        const genre = await Genre.findById(req.params.id);
+        // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
+        if (!genre) 
+            return res.status(404).send(`ID: ${req.params.id} does not exist.`);
+        
+        const { error } = validateGenre(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
 
-    for (field in req.body) {
-        genre[field] = req.body[field];
+        for (field in req.body) {
+            genre[field] = req.body[field];
+        }
+
+        await genre.save();
+        res.status(200).json(genre);
+    } 
+    catch (err) {
+        res.status(400).send('ID provided was invalid.');
     }
-
-    await genre.save();
-    res.status(200).json(genre);
     // // genres[genres.indexOf(genre)].name = req.body.name;
     // res.send('working');
 });
