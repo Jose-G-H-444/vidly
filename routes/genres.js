@@ -69,30 +69,42 @@ router.post('/', async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     // if (!genres.find( (genre) => genre.name === req.body.name)) {
-    let genre = await Genre.findOne({ name: req.body.name.toLowerCase() }).exec();
-    if (!genre) {
-        genre = new Genre({
-            name: req.body.name,
-            datefounded: req.body.datefounded
-        });
-        // genre = { name: req.body.name };
-        // genres.push(genre);
-        await genre.save();
-        return res.status(200).json(genre);
+    try {
+        let genre = await Genre.findOne({ name: req.body.name.toLowerCase() }).exec();
+        if (!genre) {
+            genre = new Genre({
+                name: req.body.name,
+                datefounded: req.body.datefounded
+            });
+            // genre = { name: req.body.name };
+            // genres.push(genre);
+            await genre.save();
+            return res.status(200).json(genre);
+        }
+        res.status(400).send(`${req.body.name} already exists.`);
+    } 
+    catch (err) {
+        res.status(400).send('Invalid update.');
     }
-    res.status(400).send(`${req.body.name} already exists.`);
 });
 
-router.put('/:id', (req, res) => {
-    const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
+router.put('/:id', async (req, res) => {
+    const genre = await Genre.findById(req.params.id);
+    // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
     if (!genre) 
         return res.status(404).send(`ID: ${req.params.id} does not exist.`);
     
     const { error } = validateGenre(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    genres[genres.indexOf(genre)].name = req.body.name;
-    res.send(genre);
+    for (field in req.body) {
+        genre[field] = req.body[field];
+    }
+
+    await genre.save();
+    res.status(200).json(genre);
+    // // genres[genres.indexOf(genre)].name = req.body.name;
+    // res.send('working');
 });
 
 router.delete('/:id', (req, res) => {
