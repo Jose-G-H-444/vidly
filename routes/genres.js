@@ -3,7 +3,6 @@ const router = express.Router();
 const debug = require('debug')('app:base');
 const Joi = require('joi');
 const mongoose = require('mongoose');
-const fs = require('fs');
 const helmet = require('helmet');
 
 // Required middleware
@@ -11,11 +10,7 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 router.use(helmet());
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => debug('Connected to MongoDB...'))
-    .catch(erro => debug('Could not connect to MongoDB'));
-
-const genreSchema = new mongoose.Schema({
+const Genre = mongoose.model('Genre', new mongoose.Schema({
     name: { 
         type: String,
         required: true,
@@ -24,27 +19,11 @@ const genreSchema = new mongoose.Schema({
         lowercase: true
     },
     datefounded: Date
-});
-const Genre = mongoose.model('Genre', genreSchema);
-
-// Add genres to database
-// async function addGenres() {
-//     const genreData = fs.readFileSync('routes/genres.json');
-//     let genres = JSON.parse(genreData);
-//     courses = await Genre.insertMany(genres);
-//     debug(genres);
-// }
-// addGenres();
-
-// let genres = [
-//     { id: 1, name: 'Horror'},
-//     { id: 2, name: 'RomCom'},
-//     { id: 3, name: 'Comedy'}
-// ];
+}));
 
 router.get('/', async (req, res) => {
     const genres = await Genre.find()
-    .select({ name: 1, datefounded: 1 });
+    .select({ name: 1, datefounded: 1 }).sort('name');
     res.status(200).json(genres);
 });
 
