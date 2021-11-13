@@ -10,15 +10,21 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 router.use(helmet());
 
-const Genre = mongoose.model('Genre', new mongoose.Schema({
+const MAX_LENGTH_CUST_NAME = 50;
+const MIN_LENGTH_CUST_NAME = 5;
+
+const Customer = mongoose.model('Customer', new mongoose.Schema({
     name: { 
         type: String,
         required: true,
-        minlength: 5,
-        maxlength: 20,
+        minlength: MIN_LENGTH_CUST_NAME,
+        maxlength: MAX_LENGTH_CUST_NAME,
         lowercase: true
     },
-    datefounded: Date
+    phone: {
+        type: Number,
+        required: true
+    }
 }));
 
 router.get('/', async (req, res) => {
@@ -110,7 +116,7 @@ module.exports = router;
 
 function validateGenre(genre) {
     const schema = Joi.object({
-        name: Joi.string().min(5).max(20).required(),
+        name: Joi.string().min(MIN_LENGTH_CUST_NAME).max(MAX_LENGTH_CUST_NAME).required(),
         datefounded: Joi.date()
     });
 

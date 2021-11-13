@@ -1,0 +1,5 @@
+[
+    { "isGold":"False","name":"Customer_1","phone":"12345"},
+    { "isGold":"True","name":"Customer_2","phone":"12345"},
+    { "isGold":"False","name":"Customer_3","phone":"12345"}
+]
