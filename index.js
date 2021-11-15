@@ -3,6 +3,7 @@ const app = express();
 require('dotenv').config()
 const debug = require('debug')('app:base');
 const genres = require('./routes/genres');
+const customers = require('./routes/customers');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const { phone } = require('phone');
@@ -64,6 +65,8 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
 // ];
 
 app.use('/api/genres', genres);
+app.use('/api/customers', customers);
+
 
 const port = process.env.PORT || 3000;
 
