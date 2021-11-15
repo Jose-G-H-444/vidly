@@ -23,20 +23,20 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
         lowercase: true
     },
     phone: {
-        type: Number,
+        type: String,
         required: true,
         validator: {
             validate: phoneNumber => phone(phoneNumber).isValid,
-            message: 'Please enter a valid phone number.'
+            message: 'Invalid phone number.'
         }
     },
     isGold: Boolean
 }));
 
 router.get('/', async (req, res) => {
-    const genres = await Genre.find()
-    .select({ name: 1, datefounded: 1 }).sort('name');
-    res.status(200).json(genres);
+    const customers = await Customer.find()
+    .select({ name: 1, isGold: 1 }).sort('name');
+    res.status(200).json(customers);
 });
 
 router.get('/:id', async (req, res) => {
@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { error } = validateGenre(req.body);
+    const { error } = validateCustomer(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     // if (!genres.find( (genre) => genre.name === req.body.name)) {
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const { error } = validateGenre(req.body);
+        const { error } = validateCustomer(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
         const genre = await Genre.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -120,12 +120,14 @@ router.delete('/:id', async (req, res) => {
 
 module.exports = router;
 
-function validateGenre(genre) {
+function validateCustomer(customer) {
     const schema = Joi.object({
         name: Joi.string().min(MIN_LENGTH_CUST_NAME).max(MAX_LENGTH_CUST_NAME).required(),
-        datefounded: Joi.date(),
+        phone: Joi.string().custom(( value, helper) => {
+            phoneNumber => phone(phoneNumber).isValid ? value : helper.error('Invalid phone number.');
+        }),
         isGold: Boolean
     });
 
-    return schema.validate(genre);
+    return schema.validate(customer);
 }
