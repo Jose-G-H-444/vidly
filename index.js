@@ -5,6 +5,7 @@ const debug = require('debug')('app:base');
 const genres = require('./routes/genres');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const { phone } = require('phone');
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => debug('Connected to MongoDB...'))
@@ -22,20 +23,39 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
         lowercase: true
     },
     phone: {
-        type: Number,
-        required: true
+        type: String,
+        required: true,
+        validate: {
+            validator: phoneNumber => phone(phoneNumber).isValid,
+            message: 'Please enter a valid phone number.'
+        }
     },
     isGold: Boolean
 }));
 
 // Add genres to mongodb
-async function addJSONDocs(path, model) {
-    const docData = fs.readFileSync(path);
-    let docs = JSON.parse(docData);
-    docs = await model.insertMany(docs);
-    debug(docs);
-}
-addJSONDocs('data/customers.json', Customer);
+// async function addJSONDocs(path, model) {
+//     const docData = fs.readFileSync(path);
+//     let docs = JSON.parse(docData);
+//     docs = await model.insertMany(docs);
+//     debug(docs);
+// }
+// addJSONDocs('data/customers.json', Customer);
+
+// async function addDoc(model) {
+//     try {
+//         const doctData = new model({
+//             name: 'phone test',
+//             phone: 9494393038,
+//             isGold: true
+//         });
+//         const doc = await doctData.save();
+//     } 
+//     catch (err) {
+//         debug(err.message);
+//     }
+// }
+// addDoc(Customer);
 
 // let genres = [
 //     { id: 1, name: 'Horror'},

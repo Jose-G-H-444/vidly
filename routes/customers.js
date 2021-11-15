@@ -4,6 +4,7 @@ const debug = require('debug')('app:base');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const { phone } = require('phone');
 
 // Required middleware
 router.use(express.json());
@@ -23,7 +24,11 @@ const Customer = mongoose.model('Customer', new mongoose.Schema({
     },
     phone: {
         type: Number,
-        required: true
+        required: true,
+        validator: {
+            validate: phoneNumber => phone(phoneNumber).isValid,
+            message: 'Please enter a valid phone number.'
+        }
     },
     isGold: Boolean
 }));
