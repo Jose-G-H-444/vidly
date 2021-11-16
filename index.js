@@ -6,7 +6,12 @@ const genres = require('./routes/genres');
 const customers = require('./routes/customers');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const helmet = require('helmet');
 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => debug('Connected to MongoDB...'))

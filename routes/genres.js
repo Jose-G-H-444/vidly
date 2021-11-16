@@ -1,15 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const debug = require('debug')('app:base');
-const Joi = require('joi');
 const mongoose = require('mongoose');
-const helmet = require('helmet');
-const Genre = require('../models/genres');
-
-// Required middleware
-router.use(express.json());
-router.use(express.urlencoded({ extended: true }));
-router.use(helmet());
+const { Genre } = require('../models/genres');
+const { validateGenre } = require('../models/genres');
 
 router.get('/', async (req, res) => {
     const genres = await Genre.find()
@@ -83,12 +77,3 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
-
-function validateGenre(genre) {
-    const schema = Joi.object({
-        name: Joi.string().min(5).max(20).required(),
-        datefounded: Joi.date()
-    });
-
-    return schema.validate(genre);
-}

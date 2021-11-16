@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const debug = require('debug')('app:base');
-const Joi = require('joi');
 const mongoose = require('mongoose');
-const helmet = require('helmet');
-const { phone } = require('phone');
 const { Customer } = require('../models/customers');
+const { validateCustomer } = require('../models/customers');
 
 // Required middleware
-router.use(express.json());
-router.use(express.urlencoded({ extended: true }));
-router.use(helmet());
+
 
 router.get('/', async (req, res) => {
     const customers = await Customer.model.find()
@@ -83,15 +79,3 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
-
-function validateCustomer(customer) {
-    const schema = Joi.object({
-        name: Joi.string().min(Customer.MIN_LENGTH_NAME).max(Customer.MAX_LENGTH_NAME).required(),
-        phone: Joi.string().custom(( value, helper ) => {
-            return phone(value).isValid ? value : helper.error('any.invalid');
-        }),
-        isGold: Boolean
-    });
-
-    return schema.validate(customer);
-}
