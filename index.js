@@ -6,33 +6,12 @@ const genres = require('./routes/genres');
 const customers = require('./routes/customers');
 const mongoose = require('mongoose');
 const fs = require('fs');
-const { phone } = require('phone');
+const { Customer } = require('./model');
+
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => debug('Connected to MongoDB...'))
     .catch(erro => debug('Could not connect to MongoDB'));
-
-const MAX_LENGTH_CUST_NAME = 50;
-const MIN_LENGTH_CUST_NAME = 5;
-
-const Customer = mongoose.model('Customer', new mongoose.Schema({
-    name: { 
-        type: String,
-        required: true,
-        minlength: MIN_LENGTH_CUST_NAME,
-        maxlength: MAX_LENGTH_CUST_NAME,
-        lowercase: true
-    },
-    phone: {
-        type: String,
-        required: true,
-        validate: {
-            validator: phoneNumber => phone(phoneNumber).isValid,
-            message: 'Please enter a valid phone number.'
-        }
-    },
-    isGold: Boolean
-}));
 
 // Add genres to mongodb
 // async function addJSONDocs(path, model) {
@@ -71,3 +50,5 @@ app.use('/api/customers', customers);
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`listening on port ${port}`));
+
+module.exports.Customer = Customer;

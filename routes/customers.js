@@ -5,49 +5,28 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { phone } = require('phone');
+const { Customer } = require('../model');
 
 // Required middleware
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 router.use(helmet());
 
-const MAX_LENGTH_CUST_NAME = 50;
-const MIN_LENGTH_CUST_NAME = 5;
-
-const Customer = mongoose.model('Customer', new mongoose.Schema({
-    name: { 
-        type: String,
-        required: true,
-        minlength: MIN_LENGTH_CUST_NAME,
-        maxlength: MAX_LENGTH_CUST_NAME,
-        lowercase: true
-    },
-    phone: {
-        type: String,
-        required: true,
-        validator: {
-            validate: phoneNumber => phone(phoneNumber).isValid,
-            message: 'Invalid phone number.'
-        }
-    },
-    isGold: Boolean
-}));
-
 router.get('/', async (req, res) => {
-    const customers = await Customer.find()
-    .select({ name: 1, isGold: 1 }).sort('name');
+    const customers = await Customer.model.find()
+    .select({ name: 1, isGold: 1, phone: 1 }).sort('name');
     res.status(200).json(customers);
 });
 
 router.get('/:id', async (req, res) => {
     try {
-        const genre = await Genre.findById(req.params.id);
+        const customer = await Customer.model.findById(req.params.id);
         // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
-        if (!genre) {
-            debug(genre);
+        if (!customer) {
+            debug(customer);
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
         }
-        res.status(200).json(genre);
+        res.status(200).json(customer);
     } 
     catch (err) {
         debug(err.message);
@@ -61,38 +40,39 @@ router.post('/', async (req, res) => {
 
     // if (!genres.find( (genre) => genre.name === req.body.name)) {
     try {
-        let genre = await Genre.findOne({ name: req.body.name.toLowerCase() }).exec();
-        if (!genre) {
-            genre = new Genre({
+        let customer = await Customer.model.findOne({ name: req.body.name.toLowerCase() });
+        if (!customer) {
+            customer = new Customer.model({
                 name: req.body.name,
-                datefounded: req.body.datefounded
+                phone: req.body.phone,
+                isGold: req.body.isGold
             });
             // genre = { name: req.body.name };
             // genres.push(genre);
-            await genre.save();
-            return res.status(200).json(genre);
+            await customer.save();
+            return res.status(200).json(customer);
         }
         res.status(400).send(`${req.body.name} already exists.`);
     } 
     catch (err) {
-        res.status(400).send('Invalid entry.');
+        res.status(400).send(err.message);
     }
 });
 
 router.put('/:id', async (req, res) => {
-    try {
-        const { error } = validateCustomer(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
+    const { error } = validateCustomer(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-        const genre = await Genre.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    try {
+        const customer = await Customer.model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
-        if (!genre) 
+        if (!customer) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);    
 
-        res.status(200).json(genre);
+        res.status(200).json(customer);
     } 
     catch (err) {
-        res.status(400).send('ID provided was invalid.');
+        res.status(400).send(err.message);
     }
     // // genres[genres.indexOf(genre)].name = req.body.name;
     // res.send('working');
@@ -101,7 +81,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
     try {
-        const genre = await Genre.findByIdAndDelete(req.params.id);
+        const genre = await Customer.model.findByIdAndDelete(req.params.id);
         // const genre = genres.find( (genre) => genre.id === parseInt(req.params.id, 10));
         if (!genre) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
@@ -122,9 +102,9 @@ module.exports = router;
 
 function validateCustomer(customer) {
     const schema = Joi.object({
-        name: Joi.string().min(MIN_LENGTH_CUST_NAME).max(MAX_LENGTH_CUST_NAME).required(),
-        phone: Joi.string().custom(( value, helper) => {
-            phoneNumber => phone(phoneNumber).isValid ? value : helper.error('Invalid phone number.');
+        name: Joi.string().min(Customer.MIN_LENGTH_NAME).max(Customer.MAX_LENGTH_NAME).required(),
+        phone: Joi.string().custom(( value, helper ) => {
+            return phone(value).isValid ? value : helper.error('any.invalid');
         }),
         isGold: Boolean
     });
