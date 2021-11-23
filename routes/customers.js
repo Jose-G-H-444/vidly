@@ -2,11 +2,7 @@ const express = require('express');
 const router = express.Router();
 const debug = require('debug')('app:base');
 const mongoose = require('mongoose');
-const { Customer } = require('../models/customers');
-const { validateCustomer } = require('../models/customers');
-
-// Required middleware
-
+const { Customer, validateCustomer } = require('../models/customers');
 
 router.get('/', async (req, res) => {
     const customers = await Customer.model.find()
