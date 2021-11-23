@@ -10,9 +10,18 @@ const Movie = mongoose.model('Movie', new mongoose.Schema({
         maxlength: 20,
         lowercase: true
     },
-    genre: genreSchema,
-    numberInStock: Number,
-    dailyRentalRate: Number
+    genre: { 
+        type: genreSchema,
+        required: true
+    },
+    numberInStock: { 
+        type: Number,
+        required: true
+    },
+    dailyRentalRate: { 
+        type: Number,
+        required: true
+    }
 }));
 
 function validateMovie(genre) {
