@@ -1,0 +1,5 @@
+[
+    {"title":"Doctor Who","genre":{"name":"scifi","_id":"618ec6529e12a214873a8205"}},
+    {"title":"Dundy","genre":{"name":"funny","_id":"618f0d5a2b7e6ea59ea0ca04"}},
+    {"title":"This is the End","genre":{"name":"hicom","_id":"618f0d422b7e6ea59ea0ca00"}}
+]
