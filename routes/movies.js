@@ -2,17 +2,17 @@ const express = require('express');
 const router = express.Router();
 const debug = require('debug')('app:base');
 const mongoose = require('mongoose');
-const { Movie, validateMovie } = require('../models/customers');
+const { Movie, validateMovie } = require('../models/movies');
 
 router.get('/', async (req, res) => {
-    const movies = await Movie.model.find()
+    const movies = await Movie.find().lean()
     .select('title genre numberInStock dailyRentalRate').sort('title');
     res.status(200).json(movies);
 });
 
 router.get('/:id', async (req, res) => {
     try {
-        const movie = await Movie.model.findById(req.params.id);
+        const movie = await Movie.findById(req.params.id);
         if (!movie) {
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
         }
@@ -24,13 +24,13 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { error } = validateMovie(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    // const { error } = validateMovie(req.body);
+    // if (error) return res.status(400).send(error.details[0].message);
 
     try {
-        let movie = await Movie.model.findOne({ name: req.body.title.toLowerCase() });
+        let movie = await Movie.findOne({ title: req.body.title.toLowerCase() });
         if (!movie) {
-            movie = new Movie.model({
+            movie = new Movie({
                 title: req.body.title,
                 genre: req.body.genre,
                 numberInStock: req.body.numberInStock,
@@ -47,15 +47,15 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    const { error } = validateMovie(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    // const { error } = validateMovie(req.body);
+    // if (error) return res.status(400).send(error.details[0].message);
 
     try {
-        const customer = await Movie.model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-        if (!customer) 
+        const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!movie) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);    
 
-        res.status(200).json(customer);
+        res.status(200).json(movie);
     } 
     catch (err) {
         res.status(400).send(err.message);
@@ -64,11 +64,11 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const customer = await Movie.model.findByIdAndDelete(req.params.id);
-        if (!customer) 
+        const movie = await Movie.findByIdAndDelete(req.params.id);
+        if (!movie) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
         
-        res.status(200).json(customer);
+        res.status(200).json(movie);
     } 
     catch (err) {
         res.status(400).send('ID provided was invalid.');
