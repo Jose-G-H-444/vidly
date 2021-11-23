@@ -27,7 +27,7 @@ const Movie = mongoose.model('Movie', new mongoose.Schema({
 function validateMovie(genre) {
     const schema = Joi.object({
         title: Joi.string().min(5).max(20).required(),
-        // genre: Joi.compile(genreSchema),
+        genreId: Joi.string().required(),
         numberInStock: Joi.number().integer().min(0).required(),
         dailyRentalRate: Joi.number().integer().min(0).required()
     });
