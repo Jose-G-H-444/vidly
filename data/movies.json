@@ -1,5 +1,5 @@
 [
-    {"title":"Doctor Who","genre":{"name":"scifi","_id":"618ec6529e12a214873a8205"}},
-    {"title":"Dundy","genre":{"name":"funny","_id":"618f0d5a2b7e6ea59ea0ca04"}},
-    {"title":"This is the End","genre":{"name":"hicom","_id":"618f0d422b7e6ea59ea0ca00"}}
+    {"title":"Doctor Who","genre":{"name":"scifi","_id":"618ec6529e12a214873a8205"},"numberInStock":"3","dailyRentalRate":"1"},
+    {"title":"Dundy","genre":{"name":"funny","_id":"618f0d5a2b7e6ea59ea0ca04"},"numberInStock":"1","dailyRentalRate":"5"},
+    {"title":"This is the End","genre":{"name":"hicom","_id":"618f0d422b7e6ea59ea0ca00"},"numberInStock":"2","dailyRentalRate":"3"}
 ]

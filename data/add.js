@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const { Customer } = require('./model');
+const { Movie } = require('../models/movies');
+const fs = require('fs');
+const debug = require('debug')('app:base');
 // Add docs to mongodb
 async function addJSONDocs(path, model) {
     const docData = fs.readFileSync(path);
@@ -7,7 +9,7 @@ async function addJSONDocs(path, model) {
     docs = await model.insertMany(docs);
     debug(docs);
 }
-addJSONDocs('data/customers.json', Customer.model);
+addJSONDocs('data/movies.json', Movie);
 
 async function addDoc(model) {
     try {
@@ -22,4 +24,4 @@ async function addDoc(model) {
         debug(err.message);
     }
 }
-addDoc(Customer.model);
+// addDoc(Customer.model);
