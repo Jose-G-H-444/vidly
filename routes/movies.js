@@ -28,10 +28,10 @@ router.post('/', async (req, res) => {
     const { error } = validateMovie(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const genre = await Genre.findById(req.body.genreId);
-    if (!genre) return res.status(400).send('Invalid genre.');
-
     try {
+        const genre = await Genre.findById(req.body.genreId);
+        if (!genre) return res.status(400).send('Invalid genre.');
+
         let movie = await Movie.findOne({ title: req.body.title.toLowerCase() });
         if (!movie) {
             movie = new Movie({
@@ -53,12 +53,14 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     // const { error } = validateMovie(req.body);
     // if (error) return res.status(400).send(error.details[0].message);
-
-    // if (req.body.genreId)
-    // const genre = await Genre.findById(req.body.genreId);
-    // if (!genre) return res.status(400).send('Invalid genre.');
+    let genre;
 
     try {
+        if (req.body.genreId) {
+            genre = await Genre.findById(req.body.genreId);
+            if (!genre) return res.status(400).send('Invalid genre.');
+        }
+        
         const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!movie) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);    

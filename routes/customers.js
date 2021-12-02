@@ -4,15 +4,17 @@ const debug = require('debug')('app:base');
 const mongoose = require('mongoose');
 const { Customer, validateCustomer } = require('../models/customers');
 
+
 router.get('/', async (req, res) => {
-    const customers = await Customer.model.find()
+    const customers = await Customer.find()
     .select({ name: 1, isGold: 1, phone: 1 }).sort('name');
+    
     res.status(200).json(customers);
 });
 
 router.get('/:id', async (req, res) => {
     try {
-        const customer = await Customer.model.findById(req.params.id);
+        const customer = await Customer.findById(req.params.id);
         if (!customer) {
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
         }
@@ -28,9 +30,9 @@ router.post('/', async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     try {
-        let customer = await Customer.model.findOne({ name: req.body.name.toLowerCase() });
+        let customer = await Customer.findOne({ name: req.body.name.toLowerCase() });
         if (!customer) {
-            customer = new Customer.model({
+            customer = new Customer({
                 name: req.body.name,
                 phone: req.body.phone,
                 isGold: req.body.isGold
@@ -46,11 +48,8 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    const { error } = validateCustomer(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
     try {
-        const customer = await Customer.model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!customer) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);    
 
@@ -63,7 +62,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const customer = await Customer.model.findByIdAndDelete(req.params.id);
+        const customer = await Customer.findByIdAndDelete(req.params.id);
         if (!customer) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);
         

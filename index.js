@@ -5,6 +5,7 @@ const debug = require('debug')('app:base');
 const genres = require('./routes/genres');
 const customers = require('./routes/customers');
 const movies = require('./routes/movies');
+const rentals = require('./routes/rentals');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const helmet = require('helmet');
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 app.use('/api/genres', genres);
 app.use('/api/customers', customers);
 app.use('/api/movies', movies);
+app.use('/api/rentals', rentals);
 
 
 const port = process.env.PORT || 3000;
