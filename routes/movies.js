@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 
     try {
         const genre = await Genre.findById(req.body.genreId);
-        if (!genre) return res.status(400).send('Invalid genre.');
+        if (!genre) return res.status(404).send(`${req.body.genreId} does not exist.`);
 
         let movie = await Movie.findOne({ title: req.body.title.toLowerCase() });
         if (!movie) {
@@ -65,10 +65,10 @@ router.put('/:id', async (req, res) => {
         if (!movie) 
             return res.status(404).send(`ID: ${req.params.id} does not exist.`);    
 
-        res.status(200).json(movie);
+        return res.status(200).json(movie);
     } 
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).send(err.message);
     }
 });
 
@@ -81,7 +81,7 @@ router.delete('/:id', async (req, res) => {
         res.status(200).json(movie);
     } 
     catch (err) {
-        res.status(400).send('ID provided was invalid.');
+        return res.status(400).send(err.message);
     }
 });
 

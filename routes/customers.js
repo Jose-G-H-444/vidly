@@ -40,10 +40,10 @@ router.post('/', async (req, res) => {
             await customer.save();
             return res.status(200).json(customer);
         }
-        res.status(400).send(`${req.body.name} already exists.`);
+        return res.status(400).send(`${req.body.name} already exists.`);
     } 
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).send(err.message);
     }
 });
 
